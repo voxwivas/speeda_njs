@@ -1,0 +1,24 @@
+{
+  "name": "speeda_njs",
+  "version": "0.0.0",
+  "description": "Speeda NodeJS app",
+  "main": "app/app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://ghostfreak3000@github.com/voxwivas/speeda_njs.git"
+  },
+  "author": "Bishaka Samuel <sbishaka@gmail.com> (https://twitter.com/sbishaka)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/voxwivas/speeda_njs/issues"
+  },
+  "homepage": "https://github.com/voxwivas/speeda_njs#readme",
+  "dependencies": {
+    "exec": "^0.2.1",
+    "express": "^4.13.4",
+    "simple-ssh": "^0.8.7"
+  }
+}
