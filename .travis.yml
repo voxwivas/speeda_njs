@@ -9,3 +9,7 @@ script:
 after_success:
 - node scripts/sftp.js
 - node scripts/ssh.js
+# whitelist
+branches:
+  only:
+    - master
