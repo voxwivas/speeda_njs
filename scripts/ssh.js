@@ -22,7 +22,7 @@ ssh
 .exec('echo "Running new instance" && cd speeda_njs && NODE_ENV=production node app/app.js', {
     out: function(_console){
       console.log(_console);
-      if(_console.trim() === "Example app listening on port 3000!"){
+      if(_console.trim() === "Express server listening on port 3000"){
         setTimeout(function(){ ssh.end(); }, 2000)
       }
     }
