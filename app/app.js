@@ -94,7 +94,5 @@ app.get('/fb/feed/:userid', function(req, res) {
 
 var port = process.env.PORT || 3000;
 app.listen(port, function() {
-  console.log("Express server listening on port %d", port);
-  console.log("IP : " + (serverIP===SPEEDA_HOST?serverIP:"localhost"));
-  console.log("HOST : " +SPEEDA_HOST);
+  console.log("Server up");
 });
