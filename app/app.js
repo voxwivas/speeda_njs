@@ -24,7 +24,7 @@ var conf = {
 // Routes
 
 app.get('/', function(req, res){
-  res.send("So we good with pm2?");
+  res.send("0 downtime achieved!");
 });
 
 app.get('/auth/facebook', function(req, res) {
