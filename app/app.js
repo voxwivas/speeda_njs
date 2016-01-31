@@ -7,6 +7,7 @@ var
     graph     = require('fbgraph'),
     db =  require('./db'),
     serverIP = require('ip').address(),
+    SPEEDA_HOST = process.env.SPEEDA_HOST,
     FACEBOOK_APP_ID = process.env.SPEEDA_FB_APP_ID,
     FACEBOOK_APP_SEC = process.env.SPEEDA_FB_APP_SEC,
     app = express()
