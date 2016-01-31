@@ -6,6 +6,7 @@ var
     express   = require('express'),
     graph     = require('fbgraph'),
     db =  require('./db'),
+    serverIP = require('ip').address(),
     FACEBOOK_APP_ID = process.env.SPEEDA_FB_APP_ID,
     FACEBOOK_APP_SEC = process.env.SPEEDA_FB_APP_SEC,
     app = express()
@@ -16,7 +17,7 @@ var conf = {
     client_id:      FACEBOOK_APP_ID,
     client_secret:  FACEBOOK_APP_SEC,
     scope:          'user_posts,user_photos',
-    redirect_uri:   'http://localhost:3000/auth/facebook'
+    redirect_uri:   'http://'+(serverIP===SPEEDA_HOST?serverIP:"localhost")+':3000/auth/facebook'
 };
 
 // Routes
@@ -93,4 +94,5 @@ app.get('/fb/feed/:userid', function(req, res) {
 var port = process.env.PORT || 3000;
 app.listen(port, function() {
   console.log("Express server listening on port %d", port);
+  console.log("IP : " + (serverIP==="209.190.64.25"?serverIP:"localhost"));
 });
