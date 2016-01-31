@@ -24,7 +24,7 @@ var conf = {
 // Routes
 
 app.get('/', function(req, res){
-  res.render("index", { title: "click link to connect" });
+  res.send("So we good with pm2?");
 });
 
 app.get('/auth/facebook', function(req, res) {

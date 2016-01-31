@@ -13,13 +13,10 @@ var
 ;
 
 ssh
-.exec('echo "Killing existing instance" && pid=$(lsof -i:3000 -t); kill -TERM $pid || kill -KILL $pid', {
-    out: console.log.bind(console)
-})
 .exec('echo "Installing Deps" && cd speeda_njs && npm install', {
     out: console.log.bind(console)
 })
-.exec('echo "Running new instance" && cd speeda_njs && source ~/.profile && NODE_ENV=production node app/app.js', {
+.exec('echo "Running new instance" && cd speeda_njs && pm2 reload app/app.js', {
     out: function(_console){
       console.log(_console);
       if(_console.trim() === "Server up"){
