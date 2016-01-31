@@ -91,6 +91,19 @@ app.get('/fb/feed/:userid', function(req, res) {
   })
 });
 
+app.get('/fb/:speedaid/:fbid/picture', function(req, res) {
+  db.getUser(req.params.speedaid).then(function(user){
+    graph.setAccessToken(user.fb.accessToken);
+    graph.setVersion("2.5");
+    var fields = [ 'full_picture','message','created_time','name','place',
+                  'story','status_type','application','object_id','type',
+                  'caption','description','from','link','picture']
+    graph.get('/'+req.params.fbid+'/picture?type=large',function(err,fbres){
+      res.send(fbres);
+    })
+  })
+});
+
 
 var port = process.env.PORT || 3000;
 app.listen(port, function() {
