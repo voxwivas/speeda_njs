@@ -6,6 +6,9 @@ var
     express   = require('express'),
     graph     = require('fbgraph'),
     db =  require('./db'),
+    multer = require('multer'),
+    upload = multer(),
+    bodyParser = require('body-parser'),
     serverIP = require('ip').address(),
     SPEEDA_HOST = process.env.SPEEDA_HOST,
     FACEBOOK_APP_ID = process.env.SPEEDA_FB_APP_ID,
@@ -17,12 +20,15 @@ var
 var conf = {
     client_id:      FACEBOOK_APP_ID,
     client_secret:  FACEBOOK_APP_SEC,
-    scope:          'user_posts,user_photos',
+    scope:          'user_posts,user_photos,publish_actions',
     redirect_uri:   'http://'+(serverIP===SPEEDA_HOST?serverIP:"localhost")+':3000/auth/facebook'
 };
 
-// Routes
+app.use(bodyParser.json()); // for parsing application/json
+app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 
+
+// Routes
 app.get('/', function(req, res){
   res.send("0 downtime achieved!");
 });
@@ -76,6 +82,23 @@ app.get('/auth/facebook', function(req, res) {
 
 });
 
+/**
+ * @api {post} /fb/feed/:speedaid Get User's Feed
+ * @apiGroup Facebook
+ * @apiParam {String} speedaid The User's Speeda ID
+ */
+ app.post('/fb/feed/:userid', function(req, res) {
+  db.getUser(req.params.userid).then(function(user){
+    graph.setAccessToken(user.fb.accessToken);
+    graph.setVersion("2.5");
+    graph.post('/feed',{message:req.body.message},function(err,fbres){
+      db.AddPost(fbres).then(function(newPost){
+        res.send(newPost);
+      });
+    });
+
+  })
+});
 
 /**
  * @api {get} /fb/feed/:speedaid Get User's Feed

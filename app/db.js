@@ -5,7 +5,7 @@ var
     graph = require('fbgraph'),
     path = require('path'),
     db_path = path.join(__dirname,'..','db');
-    db_names = ['users'],
+    db_names = ['users','posts'],
     db = {},
     gut = module.exports = {}
 ;
@@ -58,6 +58,14 @@ gut.getUser = function(userid){
   return new Promise(function(resolve,reject){
     db['users'].find({_id:userid},function(err,docs){
         resolve(docs[0])
+    })
+  })
+}
+
+gut.AddPost = function(post){
+  return new Promise(function(resolve,reject){
+    db['posts'].insert(post,function(err,newPost){
+      resolve(newPost);
     })
   })
 }
