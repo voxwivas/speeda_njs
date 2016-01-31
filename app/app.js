@@ -77,8 +77,12 @@ app.get('/auth/facebook', function(req, res) {
 });
 
 
-// user gets sent here after being authorized
-app.get('/fb/feed/:userid', function(req, res) {
+/**
+ * @api {get} /fb/feed/:speedaid Get User's Feed
+ * @apiGroup Facebook
+ * @apiParam {String} speedaid The User's Speeda ID
+ */
+ app.get('/fb/feed/:userid', function(req, res) {
   db.getUser(req.params.userid).then(function(user){
     graph.setAccessToken(user.fb.accessToken);
     graph.setVersion("2.5");
@@ -90,7 +94,12 @@ app.get('/fb/feed/:userid', function(req, res) {
     })
   })
 });
-
+/**
+ * @api {get} /fb/:speedaid/:fbid/picture Get Profile Picture
+ * @apiGroup Facebook
+ * @apiParam {String} speedaid The User's Speeda ID
+ * @apiParam {String} fbid The Facebook ID of the User whose profile picture you want
+ */
 app.get('/fb/:speedaid/:fbid/picture', function(req, res) {
   db.getUser(req.params.speedaid).then(function(user){
     graph.setAccessToken(user.fb.accessToken);
