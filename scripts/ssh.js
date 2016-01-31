@@ -19,7 +19,7 @@ ssh
 .exec('echo "Installing Deps" && cd speeda_njs && npm install', {
     out: console.log.bind(console)
 })
-.exec('echo "Running new instance" && cd speeda_njs && NODE_ENV=production node app/app.js', {
+.exec('echo "Running new instance" && cd speeda_njs && source ~/.profile && NODE_ENV=production node app/app.js', {
     out: function(_console){
       console.log(_console);
       if(_console.trim() === "Express server listening on port 3000"){
