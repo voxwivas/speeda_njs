@@ -4,7 +4,8 @@
   "description": "Speeda NodeJS app",
   "main": "app/app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app/app.js"
   },
   "repository": {
     "type": "git",
@@ -17,8 +18,15 @@
   },
   "homepage": "https://github.com/voxwivas/speeda_njs#readme",
   "dependencies": {
+    "bluebird": "^3.1.5",
     "exec": "^0.2.1",
     "express": "^4.13.4",
+    "express-session": "^1.13.0",
+    "fbgraph": "^1.1.0",
+    "nedb": "^1.7.2",
+    "node-uuid": "^1.4.7",
+    "passport": "^0.3.2",
+    "passport-facebook": "^2.0.0",
     "simple-ssh": "^0.8.7"
   }
 }
