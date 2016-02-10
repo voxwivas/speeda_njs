@@ -7,7 +7,7 @@ var
     SPEEDA_PATH = process.env.SPEEDA_PATH
 ;
 
-exec('sshpass -p '+SPEEDA_PASS+' scp -P '+SPEEDA_PORT+'  -o stricthostkeychecking=no -rq app package.json '+SPEEDA_USER+'@'+SPEEDA_HOST+':'+SPEEDA_PATH, function(err, out, code) {
+exec('sshpass -p '+SPEEDA_PASS+' scp -P '+SPEEDA_PORT+'  -o stricthostkeychecking=no -rq app package.json public '+SPEEDA_USER+'@'+SPEEDA_HOST+':'+SPEEDA_PATH, function(err, out, code) {
   if (err instanceof Error)
     throw err;
   process.stderr.write(err);
