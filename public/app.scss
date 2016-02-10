@@ -1,0 +1,31 @@
+body,html{
+  height: 100%;
+  overflow-x: hidden;
+}
+
+body{
+  background-color: rgba(35,42,50,1);
+}
+
+#appTitle{
+  color: rgba(255,255,255,.9);
+  padding: 15px 15px;
+  font-size: 20px;
+}
+
+#header{
+  background-color: rgba(22,26,35,1);
+}
+
+.dashboard-tile{
+  background-color: rgba(21,25,34,1);
+}
+
+#dashboard{
+  padding: 20px;
+}
+
+.dashboard-tile-title{
+  padding-top: 10px;
+  color: rgba(255,255,255,.9);
+}

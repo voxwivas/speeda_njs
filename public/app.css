@@ -1,0 +1,26 @@
+body, html {
+  height: 100%;
+  overflow-x: hidden; }
+
+body {
+  background-color: #232a32; }
+
+#appTitle {
+  color: rgba(255, 255, 255, 0.9);
+  padding: 15px 15px;
+  font-size: 20px; }
+
+#header {
+  background-color: #161a23; }
+
+.dashboard-tile {
+  background-color: #151922; }
+
+#dashboard {
+  padding: 20px; }
+
+.dashboard-tile-title {
+  padding-top: 10px;
+  color: rgba(255, 255, 255, 0.9); }
+
+/*# sourceMappingURL=app.css.map */

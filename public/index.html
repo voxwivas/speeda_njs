@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title></title>
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap-theme.min.css"/>
+    <link rel="stylesheet" href="app.css"/>
+</head>
+<body>
+<script>
+
+
+    window.fbAsyncInit = function() {
+        FB.init({
+            appId: '562209927279325',
+            cookie: true, // This is important, it's not enabled by default
+            version: 'v2.5'
+        });
+
+        FB.getLoginStatus(function(response) {
+            if (response.status === 'connected') {
+                console.log('Logged in.');
+            }
+            else {
+                FB.login();
+            }
+        });
+    };
+
+    (function(d, s, id){
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) {return;}
+        js = d.createElement(s); js.id = id;
+        js.src = "//connect.facebook.net/en_US/sdk.js";
+        fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
+
+</script>
+<div class="container-fluid">
+    <div class="row" id="header">
+        <div class="col-md-2" id="appTitle">
+            Speeda
+        </div>
+    </div>
+    <div class="row" id="dashboard">
+        <div class="col-md-3 dashboard-tile" >
+            <div class="row">
+                <div class="col-xs-12 dashboard-tile-title">
+                    Posts / Likes
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <div id="pie-chart"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="bower_components/jquery/dist/jquery.min.js"></script>
+<script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="bower_components/zingchart/client/zingchart.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

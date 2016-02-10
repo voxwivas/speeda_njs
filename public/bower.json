@@ -1,0 +1,23 @@
+{
+  "name": "public",
+  "homepage": "https://github.com/voxwivas/speeda_njs",
+  "authors": [
+    "Bishaka Samuel <sbishaka@gmail.com>"
+  ],
+  "description": "",
+  "main": "index.html",
+  "moduleType": [],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "^3.3.6",
+    "zingchart": "^2.2.2"
+  }
+}
