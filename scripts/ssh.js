@@ -16,7 +16,7 @@ ssh
 .exec('echo "Installing Npm Deps" && cd speeda_njs && npm install', {
     out: console.log.bind(console)
 })
-.exec('echo "Installing Bower components" && cd speeda_njs/public && bower install', {
+.exec('echo "Installing Bower components" && cd speeda_njs/public && bower install --allow-root', {
     out: console.log.bind(console)
 })
 .exec('echo "Running new instance" && cd speeda_njs && pm2 reload app/app.js', {
