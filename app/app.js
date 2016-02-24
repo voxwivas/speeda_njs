@@ -24,8 +24,8 @@ var conf = {
     redirect_uri:   'http://'+(serverIP===SPEEDA_HOST?serverIP:"localhost")+':3000/auth/facebook'
 };
 
-app.use(bodyParser.json()); // for parsing application/json
-app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
+app.use(bodyParser.json({limit: '50mb'})); // for parsing application/json
+app.use(bodyParser.urlencoded({ limit: '50mb',extended: true })); // for parsing application/x-www-form-urlencoded
 app.use(express.static('public'));
 
 // Routes

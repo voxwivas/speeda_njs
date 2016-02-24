@@ -82,6 +82,7 @@ gut.addLike = function(like){
     })
 };
 
+gut.engine = db;
 
 gut.initDb();
 return gut;

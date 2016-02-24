@@ -2,3 +2,4 @@ node_modules
 db
 .idea
 public/bower_components
+test
