@@ -88,6 +88,12 @@ app.post('/api/v1/like', function(req, res) {
     });
 });
 
+app.post('/api/v2/like', function(req, res) {
+    db.addLike(JSON.parse(req.body)).then(function(newLike){
+        res.send({"success":"true"});
+    });
+});
+
 /**
  * @api {get} /fb/feed/:speedaid Get User's Feed
  * @apiGroup Facebook
