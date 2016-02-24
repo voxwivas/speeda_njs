@@ -84,7 +84,7 @@ app.get('/auth/facebook', function(req, res) {
 
 app.post('/api/v1/like', function(req, res) {
     db.addLike(JSON.parse(req.body.like)).then(function(newLike){
-        res.send(newLike);
+        res.send({"success":"true"});
     });
 });
 
