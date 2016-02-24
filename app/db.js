@@ -1,11 +1,12 @@
 var
     dbstore = require('nedb'),
     Promise = require('bluebird'),
+    moment = require('moment'),
     fs = require('fs'),
     graph = require('fbgraph'),
     path = require('path'),
     db_path = path.join(__dirname,'..','db');
-    db_names = ['users','posts'],
+    db_names = ['users','posts','likes'],
     db = {},
     gut = module.exports = {}
 ;
@@ -63,12 +64,24 @@ gut.getUser = function(userid){
 }
 
 gut.AddPost = function(post){
+
   return new Promise(function(resolve,reject){
+    post["_sys_timestamp_"] = moment().toISOString();
     db['posts'].insert(post,function(err,newPost){
       resolve(newPost);
     })
   })
-}
+};
+
+gut.addLike = function(like){
+    return new Promise(function(resolve,reject){
+        like["_sys_timestamp_"] = moment().toISOString();
+        db['likes'].insert(like,function(err,newLike){
+            resolve(newLike);
+        })
+    })
+};
+
 
 gut.initDb();
 return gut;

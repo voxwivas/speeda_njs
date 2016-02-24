@@ -82,22 +82,10 @@ app.get('/auth/facebook', function(req, res) {
 
 });
 
-/**
- * @api {post} /fb/feed/:speedaid Get User's Feed
- * @apiGroup Facebook
- * @apiParam {String} speedaid The User's Speeda ID
- */
- app.post('/fb/feed/:userid', function(req, res) {
-  db.getUser(req.params.userid).then(function(user){
-    graph.setAccessToken(user.fb.accessToken);
-    graph.setVersion("2.5");
-    graph.post('/feed',{message:req.body.message},function(err,fbres){
-      db.AddPost(fbres).then(function(newPost){
-        res.send(newPost);
-      });
+app.post('/api/v1/like', function(req, res) {
+    db.addLike(JSON.parse(req.body.like)).then(function(newLike){
+        res.send(newLike);
     });
-
-  })
 });
 
 /**
