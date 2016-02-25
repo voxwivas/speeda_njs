@@ -94,6 +94,13 @@ app.post('/api/v2/like', function(req, res) {
     });
 });
 
+
+app.get('/api/v1/like/:postID', function(req, res) {
+    var post_id = req.params.postID;
+    db.getLikes(post_id).then(function(likes){
+        res.send(likes)
+    });
+});
 /**
  * @api {get} /fb/feed/:speedaid Get User's Feed
  * @apiGroup Facebook
