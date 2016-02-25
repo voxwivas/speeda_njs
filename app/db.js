@@ -75,10 +75,45 @@ gut.AddPost = function(post){
 
 gut.addLike = function(like){
     return new Promise(function(resolve,reject){
-        like["_sys_timestamp_"] = moment().toISOString();
-        db['likes'].insert(like,function(err,newLike){
-            resolve(newLike);
-        })
+        var post_time = like.timeDate;
+        var user_id = like.userID;
+        like.response.values.forEach(function(val,idx){
+            //get the number of likes
+            var likes = val.nameValuePairs.likes.nameValuePairs.summary.nameValuePairs.total_count;
+            var comments = val.nameValuePairs.comments.nameValuePairs.summary.nameValuePairs.total_count;
+            var post_id = val.nameValuePairs.id;
+            // get the last time it was checked and subtract the likes from it.
+            db['likes'].findOne({userID: '1032829753444318',postID:post_id}).sort({ _sys_timestamp_: -1 }).exec(function(err,doc){
+                console.log("Doc :" + doc );
+                var prev_likes = 0;
+                var prev_comments = 0;
+                if(doc){
+                    prev_likes = doc.likes;
+                    prev_comments = doc.comments;
+                }
+
+                likes = likes-prev_likes;
+                comments = comments-prev_comments;
+                var obj = {};
+                obj["userID"]=user_id;
+                obj["post_time"]=post_time;
+                obj["postID"]=post_id;
+                obj["_sys_timestamp_"]=moment().toISOString();
+                obj["likes"]=likes;
+                obj["comments"]=comments;
+
+                db['likes'].insert(obj,function(err,docs){
+
+                })
+            });
+        });
+
+
+
+        //like["_sys_timestamp_"] = moment().toISOString();
+        //db['likes'].insert(like,function(err,newLike){
+        //    resolve(newLike);
+        //})
     })
 };
 
