@@ -84,16 +84,13 @@ gut.addLike = function(like){
             var post_id = val.nameValuePairs.id;
             // get the last time it was checked and subtract the likes from it.
             db['likes'].find({userID: '1032829753444318',postID:post_id}).sort({ _sys_timestamp_: -1 }).exec(function(err,docs){
-                console.log("Doc :" + docs );
                 var prev_likes = 0;
                 var prev_comments = 0;
                 if(docs.length > 0){
-                    prev_likes = docs.reduce(function(prev,curr){
-                        return prev.likes + curr.likes;
-                    });
-                    prev_comments = docs.reduce(function(prev,curr){
-                        return prev.comments + curr.comments;
-                    });
+                    for(var i =0; i < docs.length; i++){
+                        prev_likes += docs[i].likes;
+                        prev_comments += docs[i].comments;
+                    }
                 }
 
                 likes = likes-prev_likes;
@@ -107,15 +104,10 @@ gut.addLike = function(like){
                 obj["comments"]=comments;
 
                 db['likes'].insert(obj,function(err,docs){
-
+                    resolve(docs);
                 })
             });
         });
-
-        //like["_sys_timestamp_"] = moment().toISOString();
-        //db['likes'].insert(like,function(err,newLike){
-        //    resolve(newLike);
-        //})
     })
 };
 
