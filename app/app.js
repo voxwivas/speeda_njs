@@ -101,6 +101,14 @@ app.get('/api/v1/like/:postID', function(req, res) {
         res.send(likes)
     });
 });
+
+app.get('/api/v2/like/total/:userID', function(req, res) {
+    var user_id = req.params.userID;
+    db.getTotalLikes(user_id).then(function(likes){
+        res.send(likes)
+    });
+});
+
 /**
  * @api {get} /fb/feed/:speedaid Get User's Feed
  * @apiGroup Facebook

@@ -114,9 +114,29 @@ gut.addLike = function(like){
 gut.getLikes = function(post_id){
     return new Promise(function(resolve,reject){
         db['likes'].find({postID:post_id}).sort({ _sys_timestamp_: -1 }).exec(function(err,docs){
-            resolve(docs);
+            var result = [];
+            if(docs.length > 0){
+                for(var i =0; i < docs.length; i++){
+                    result.push({"likes":docs[i].likes,"post_time":docs[i].post_time})
+                }
+            }
+            resolve(result);
         });
     })
+};
+
+gut.getTotalLikes = function(user_id){
+    return new Promise(function(resolve,reject){
+        db['likes'].find({userID:user_id}).sort({ _sys_timestamp_: -1 }).exec(function(err,docs){
+            var likes = 0;
+            if(docs.length > 0){
+                for(var i =0; i < docs.length; i++){
+                    likes += docs[i].likes;
+                }
+            }
+            resolve({"likes":likes});
+        });
+    });
 };
 
 gut.engine = db;
