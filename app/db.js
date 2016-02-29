@@ -113,16 +113,19 @@ gut.addLike = function(like){
 
 gut.getLikes = function(post_id){
     return new Promise(function(resolve,reject){
-        db['likes'].find({postID:post_id}).sort({ _sys_timestamp_: -1 }).exec(function(err,docs){
+        db['likes'].find({postID:post_id}).sort({ _sys_timestamp_: 1 }).exec(function(err,docs){
             var result = [];
             var likes_so_far = 0;
             if(docs.length > 0){
                 for(var i =0; i < docs.length; i++){
+                    console.log("lsfb : " + likes_so_far);
+                    console.log("l : " + docs[i].likes);
                     likes_so_far += docs[i].likes;
+                    console.log("lsfa : " + likes_so_far);
                     result.push({"likes":docs[i].likes,"post_time":docs[i].post_time,"total_likes":likes_so_far});
                 }
             }
-            resolve(result);
+            resolve(result.reverse());
         });
     })
 };
