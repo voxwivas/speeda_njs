@@ -111,13 +111,31 @@ gut.addLike = function(like){
     })
 };
 
-gut.getLikes = function(post_id){
+gut.getLikes = function(opts){
     return new Promise(function(resolve,reject){
+        var post_id = opts["post_id"];
+        var length = opts["length"];
+        var timeFilter;
+
+        switch(length){
+            case 'd':
+            case 'M':
+            case 'w':
+                timeFilter = moment().subtract(1,length);
+            break;
+            default:
+                timeFilter = moment().subtract(1,'d');
+            break;
+
+        }
+
         db['likes'].find({postID:post_id}).sort({ _sys_timestamp_: 1 }).exec(function(err,docs){
             var result = [];
             var likes_so_far = 0;
             if(docs.length > 0){
                 for(var i =0; i < docs.length; i++){
+                    if( moment(docs[i]['_sys_timestamp_']).isBefore(timeFilter) )
+                    {continue;}
                     console.log("lsfb : " + likes_so_far);
                     console.log("l : " + docs[i].likes);
                     likes_so_far += docs[i].likes;

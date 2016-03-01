@@ -97,7 +97,8 @@ app.post('/api/v2/like', function(req, res) {
 
 app.get('/api/v1/like/:postID', function(req, res) {
     var post_id = req.params.postID;
-    db.getLikes(post_id).then(function(likes){
+    var length = req.query.length || 'd';
+    db.getLikes({post_id:post_id,length:length}).then(function(likes){
         res.send(likes)
     });
 });
