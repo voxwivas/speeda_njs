@@ -6,8 +6,57 @@ var
     graph = require('fbgraph'),
     path = require('path'),
     db_path = path.join(__dirname,'..','db');
-    db_names = ['users','posts','likes'],
+    db_names = ['users','posts','likes','ranks'],
     db = {},
+    rank = function (_opts) {
+        return new Promise(function (resolve, reject) {
+            var opts = _opts || {};
+            db['likes'].find({userID:opts["userID"]},function(err,docs){
+                var post_like_map = {};
+                for (var i = 0; i < docs.length; i++) {
+                    var doc = docs[i];
+                    if(doc["likes"]===0) continue;
+                    post_like_map[doc["postID"]] = post_like_map[doc["postID"]] || 0;
+                    post_like_map[doc["postID"]] += doc["likes"];
+                }
+                opts["rank"] = {};
+                var keys = Object.keys(post_like_map);
+                var values = 0;
+                keys.forEach(function(key){
+                    values += post_like_map[key];
+                });
+                opts["rank"]["posts"]=keys.length;
+                opts["rank"]["likes"]=values;
+                db['likes'].find({"rank.likes":{$gt:opts["rank"]["likes"]}}).sort({"rank.likes":1}).exec(function(err,docs){
+                    console.log("No docs : " + docs.length);
+                    var next_rank = 0;
+                    if(docs.length > 0){
+                        var doc = docs[docs.length-1];
+                        next_rank = doc["rank"]["level"];
+                        if(docs["userId"] === opts["userId"]){
+                            opts["rank"]["level"] = next_rank+1;
+                        }else{
+                            opts["rank"]["level"] = next_rank
+                        }
+                    }else{
+                        opts["rank"]["level"] = next_rank+1;
+                    }
+                    db['ranks'].update({userID:opts["userID"]},{$set:{rank:opts["rank"]}},{multi:true},function(err,numReplaced){
+                        console.log("No docs replaced : " + numReplaced);
+                        opts["_sys_timestamp_"] = moment().toISOString();
+                        if(numReplaced===0){
+                            db['ranks'].insert(opts,function(err,doc){
+                                resolve(opts);
+                            });
+                        }else{
+                            resolve(opts);
+                        }
+
+                    })
+                })
+            });
+        });
+    },
     gut = module.exports = {}
 ;
 
@@ -83,7 +132,7 @@ gut.addLike = function(like){
             var comments = val.nameValuePairs.comments.nameValuePairs.summary.nameValuePairs.total_count;
             var post_id = val.nameValuePairs.id;
             // get the last time it was checked and subtract the likes from it.
-            db['likes'].find({userID: '1032829753444318',postID:post_id}).sort({ _sys_timestamp_: -1 }).exec(function(err,docs){
+            db['likes'].find({userID:user_id,postID:post_id}).sort({ _sys_timestamp_: -1 }).exec(function(err,docs){
                 var prev_likes = 0;
                 var prev_comments = 0;
                 if(docs.length > 0){
@@ -104,6 +153,7 @@ gut.addLike = function(like){
                 obj["comments"]=comments;
 
                 db['likes'].insert(obj,function(err,docs){
+                    rank({userID:user_id});
                     resolve(docs);
                 })
             });
