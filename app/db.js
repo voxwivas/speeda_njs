@@ -7,6 +7,8 @@ var
     path = require('path'),
     db_path = path.join(__dirname,'..','db');
     db_names = ['users','posts','likes','ranks'],
+    days = ["Sunday","Monday","Tuesday","Wednesday","Thusrday","Friday","Saturday"],
+    months = ["January","February","March","April","May","June","July","August","September","October","November","December"]
     db = {},
     rank = function (_opts) {
         return new Promise(function (resolve, reject) {
@@ -193,7 +195,36 @@ gut.getLikes = function(opts){
                     result.push({"likes":docs[i].likes,"post_time":docs[i].post_time,"total_likes":likes_so_far});
                 }
             }
-            resolve(result.reverse());
+
+            result = result.reverse()
+
+            switch(length){
+                case 'w':
+                    var result_w = {};
+                    //days.forEach(function(day){
+                    //    result_w[day] = [];
+                    //});
+                    result.forEach(function(like){
+                        var day = days[moment(like["post_time"]).day()];
+                        result_w[day] = result_w[day] || [];
+                        result_w[day].push(like);
+                    });
+                    resolve(result_w);
+                break;
+                case 'M':
+                    var result_m = {};
+                    result.forEach(function(like){
+
+                        var mom = moment(like["post_time"]), week_no = Math.ceil(mom.date() / 7), month = months[mom.month()];
+                        result_m[month+"_Week_"+week_no] = result_m[month+"_Week_"+week_no] || [];
+                        result_m[month+"_Week_"+week_no].push(like);
+                    });
+                    resolve(result_m);
+                break;
+                default:
+                    resolve(result);
+                break;
+            }
         });
     })
 };
