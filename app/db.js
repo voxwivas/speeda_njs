@@ -10,51 +10,106 @@ var
     days = ["Sunday","Monday","Tuesday","Wednesday","Thusrday","Friday","Saturday"],
     months = ["January","February","March","April","May","June","July","August","September","October","November","December"]
     db = {},
+    addUser = function(_opts){
+        return new Promise(function(resolve,reject){
+            var opts = _opts || {};
+            if(opts["userID"]){
+                db['users'].find({userID:opts["userID"]},function(err,docs){
+                    if(docs.length===0){
+                         var user = { "userID":opts["userID"] };
+                        db['users'].insert(user,function(err,doc){
+                            resolve(opts);
+                        })
+                    }
+                })
+            }
+        });
+    },
     rank = function (_opts) {
         return new Promise(function (resolve, reject) {
             var opts = _opts || {};
-            db['likes'].find({userID:opts["userID"]},function(err,docs){
-                var post_like_map = {};
-                for (var i = 0; i < docs.length; i++) {
-                    var doc = docs[i];
-                    if(doc["likes"]===0) continue;
-                    post_like_map[doc["postID"]] = post_like_map[doc["postID"]] || 0;
-                    post_like_map[doc["postID"]] += doc["likes"];
-                }
-                opts["rank"] = {};
-                var keys = Object.keys(post_like_map);
-                var values = 0;
-                keys.forEach(function(key){
-                    values += post_like_map[key];
-                });
-                opts["rank"]["posts"]=keys.length;
-                opts["rank"]["likes"]=values;
-                db['likes'].find({"rank.likes":{$gt:opts["rank"]["likes"]}}).sort({"rank.likes":1}).exec(function(err,docs){
-                    console.log("No docs : " + docs.length);
-                    var next_rank = 0;
-                    if(docs.length > 0){
-                        var doc = docs[docs.length-1];
-                        next_rank = doc["rank"]["level"];
-                        if(docs["userId"] === opts["userId"]){
-                            opts["rank"]["level"] = next_rank+1;
-                        }else{
-                            opts["rank"]["level"] = next_rank
-                        }
-                    }else{
-                        opts["rank"]["level"] = next_rank+1;
+            db["likes"].loadDatabase(function (err) {    // Callback is optional
+                db['likes'].find({userID:opts["userID"]},function(err,docs){
+                    var post_like_map = {};
+                    for (var i = 0; i < docs.length; i++) {
+                        var doc = docs[i];
+                        if(doc["likes"]===0) continue;
+                        post_like_map[doc["postID"]] = post_like_map[doc["postID"]] || 0;
+                        post_like_map[doc["postID"]] += doc["likes"];
                     }
-                    db['ranks'].update({userID:opts["userID"]},{$set:{rank:opts["rank"]}},{multi:true},function(err,numReplaced){
-                        console.log("No docs replaced : " + numReplaced);
-                        opts["_sys_timestamp_"] = moment().toISOString();
-                        if(numReplaced===0){
-                            db['ranks'].insert(opts,function(err,doc){
-                                resolve(opts);
-                            });
+                    opts["rank"] = {};
+                    var keys = Object.keys(post_like_map);
+                    var values = 0;
+                    keys.forEach(function(key){
+                        values += post_like_map[key];
+                    });
+                    opts["rank"]["posts"]=keys.length;
+                    opts["rank"]["likes"]=values;
+                    db["likes"].loadDatabase(function (err) {
+                        db['likes'].find({"rank.likes":{$gt:opts["rank"]["likes"]}}).sort({"rank.likes":1}).exec(function(err,docs){
+                        console.log("No docs : " + docs.length);
+                        var next_rank = 0;
+                        if(docs.length > 0){
+                            var doc = docs[docs.length-1];
+                            next_rank = doc["rank"]["level"];
+                            if(docs["userId"] === opts["userId"]){
+                                opts["rank"]["level"] = next_rank+1;
+                            }else{
+                                opts["rank"]["level"] = next_rank
+                            }
                         }else{
-                            resolve(opts);
+                            opts["rank"]["level"] = next_rank+1;
                         }
+                        db["ranks"].loadDatabase(function (err) {
+                            db['ranks'].update({userID:opts["userID"]},{$set:{rank:opts["rank"]}},{multi:true},function(err,numReplaced){
+                            console.log("No docs replaced : " + numReplaced);
+                            opts["_sys_timestamp_"] = moment().toISOString();
+                            if(numReplaced===0){
+                                db['ranks'].insert(opts,function(err,doc){
+                                    resolve(opts);
+                                });
+                            }else{
+                                resolve(opts);
+                            }
 
+                        })
+                        });
                     })
+                    });
+                });
+            });
+
+        });
+    },
+    Dashboard = function(_opts){
+        var opts = _opts || {};
+        this.version="0.0";
+        this.charts = opts["charts"] || [];
+    },
+    countUsers = function(_opts){
+        return new Promise(function(resolve,reject){
+            var opts = _opts || {};
+            db["users"].loadDatabase(function (err) {    // Callback is optional
+                db["users"].count({}, function (err, count) {
+                    console.log("User count : " + count);
+                    opts["num_users"]=count;
+                    resolve(opts);
+                });
+            });
+        });
+    },
+    countLikes = function(_opts){
+        return new Promise(function(resolve,reject){
+            var opts = _opts || {};
+            db["ranks"].loadDatabase(function (err) {
+                db['ranks'].find({},function(err,docs){
+                    var total = 0;
+                    for (var i = 0; i < docs.length; i++) {
+                        var doc = docs[i];
+                        total += doc["rank"]["likes"];
+                    }
+                    opts["num_likes"]=total;
+                    resolve(opts);
                 })
             });
         });
@@ -69,7 +124,9 @@ gut.initDb = function(){
       db_names.forEach(function(db_name,idx){
         db_path_buff = path.join(db_path,db_name+'.db');
         db[db_name] = new dbstore({filename:db_path_buff,autoload:true});
-      })
+      });
+      db["users"].ensureIndex({ fieldName: 'userID', unique: true },function(err){
+      });
       resolve();
   });
 }
@@ -114,6 +171,10 @@ gut.getUser = function(userid){
   })
 }
 
+gut.addUser = addUser;
+
+gut.rank = rank;
+
 gut.AddPost = function(post){
 
   return new Promise(function(resolve,reject){
@@ -128,6 +189,7 @@ gut.addLike = function(like){
     return new Promise(function(resolve,reject){
         var post_time = like.timeDate;
         var user_id = like.userID;
+        addUser({"userID":user_id});
         like.response.values.forEach(function(val,idx){
             //get the number of likes
             var likes = val.nameValuePairs.likes.nameValuePairs.summary.nameValuePairs.total_count;
@@ -240,6 +302,27 @@ gut.getTotalLikes = function(user_id){
             }
             resolve({"likes":likes});
         });
+    });
+};
+
+gut.getDashboard = function(_opts){
+    return new Promise(function(resolve,reject){
+        var res = _opts || {};
+        res["dashboard"] = new Dashboard();
+
+        countUsers().then(countLikes).then(function(opts){
+            console.log("Num likes : " + opts["num_likes"]);
+            var users = require('./templates/user_dash.json'),
+                likes = require('./templates/likes_dash.json');
+            users["data"]["title"]["text"]="Users";
+            users["data"]["subtitle"]["text"]=opts["num_users"];
+            likes["data"]["title"]["text"]="Likes";
+            likes["data"]["subtitle"]["text"]=opts["num_likes"];
+            res["dashboard"]["charts"].push(users);
+            res["dashboard"]["charts"].push(likes);
+            resolve(res);
+        })
+
     });
 };
 

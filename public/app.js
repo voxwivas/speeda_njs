@@ -25,4 +25,5 @@ $(document).ready(function(){
         backgroundColor:"transparent",
         fill:"rgba(0,0,0,0)"
     });
+
 });
