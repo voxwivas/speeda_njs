@@ -189,7 +189,6 @@ gut.addLike = function(like){
     return new Promise(function(resolve,reject){
         var post_time = like.timeDate;
         var user_id = like.userID;
-        addUser({"userID":user_id});
         like.response.values.forEach(function(val,idx){
             //get the number of likes
             var likes = val.nameValuePairs.likes.nameValuePairs.summary.nameValuePairs.total_count;
